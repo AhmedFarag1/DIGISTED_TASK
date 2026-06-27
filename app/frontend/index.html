@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multilingual RAG · Gemini + Qdrant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">◆</span>
+        <div>
+          <h1>Multilingual RAG</h1>
+          <p>Gemini LLM · E5 embeddings · Qdrant (local)</p>
+        </div>
+      </div>
+      <div class="status" id="status">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">checking…</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="chat-panel">
+        <div class="messages" id="messages">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">✦</div>
+            <h2>Ask anything</h2>
+            <p>Questions are answered from the Natural Questions knowledge base, grounded with retrieved passages. Works in multiple languages.</p>
+            <div class="suggestions">
+              <button class="chip" data-q="Who had the most wins in the NFL?">Most NFL wins?</button>
+              <button class="chip" data-q="What is opt-in email marketing?">Opt-in email marketing</button>
+              <button class="chip" data-q="Who is the mother in How I Met Your Mother?">HIMYM mother</button>
+            </div>
+          </div>
+        </div>
+
+        <form class="composer" id="composer">
+          <textarea id="question" rows="1" placeholder="Ask a question…" autocomplete="off"></textarea>
+          <button type="submit" id="sendBtn" class="send" title="Send">
+            <span class="send-label">Ask</span>
+          </button>
+        </form>
+      </section>
+
+      <aside class="side-panel">
+        <div class="card">
+          <h3>Retrieval settings</h3>
+          <p class="muted">Control how Qdrant searches before Gemini answers.</p>
+          <label class="field">
+            <span>Top-K passages</span>
+            <input type="number" id="topK" min="1" max="20" value="5" />
+          </label>
+          <p class="hint">How many chunks to retrieve (default 5). Higher = more context, slower.</p>
+          <label class="field">
+            <span>Domain</span>
+            <select id="domain">
+              <option value="">Any</option>
+              <option>sports</option><option>entertainment</option>
+              <option>geography</option><option>history</option>
+              <option>science</option><option>technology</option>
+              <option>politics</option><option>health</option>
+              <option>general</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Difficulty</span>
+            <select id="difficulty">
+              <option value="">Any</option>
+              <option>easy</option><option>medium</option><option>hard</option>
+            </select>
+          </label>
+          <p class="hint">Optional filters on chunk metadata stored in Qdrant.</p>
+          <label class="toggle">
+            <input type="checkbox" id="multiTurn" />
+            <span>Multi-turn conversation</span>
+          </label>
+          <p class="hint">Keeps chat history so follow-up questions work (e.g. "and his age?").</p>
+          <label class="toggle">
+            <input type="checkbox" id="tts" />
+            <span>Prepare TTS-ready text</span>
+          </label>
+        </div>
+
+        <div class="card">
+          <h3>Evaluation</h3>
+          <p class="muted">Benchmark retrieval + Gemini on random dataset samples. Can take several minutes.</p>
+          <label class="field">
+            <span>Samples</span>
+            <input type="number" id="evalSamples" min="1" max="20" value="3" />
+          </label>
+          <p class="hint">Start with 3 samples. Each calls E5 + Gemini — needs free RAM.</p>
+          <button class="ghost-btn" id="evalBtn">Run evaluation</button>
+          <pre class="eval-output" id="evalOutput" hidden></pre>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
